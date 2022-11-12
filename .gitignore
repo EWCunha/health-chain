@@ -1,0 +1,11 @@
+smart contracts/node_modules
+smart contracts/.env
+smart contracts/coverage
+smart contracts/coverage.json
+smart contracts/typechain
+smart contracts/typechain-types
+
+#Hardhat files
+smart contracts/cache
+smart contracts/artifacts
+
