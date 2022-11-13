@@ -1,4 +1,5 @@
 smart contracts/node_modules
+frontend/health-chain-front/node_modules
 smart contracts/.env
 smart contracts/coverage
 smart contracts/coverage.json
