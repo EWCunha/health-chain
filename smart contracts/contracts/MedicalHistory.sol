@@ -12,11 +12,13 @@ contract MedicalHistory {
     bool public considerTrustedParties; // consider the management contract list of trusted parties.
     mapping(address => bytes32) public allowedParties; // mapping from parties addresses to encrypted IPFS URIs.
     uint256 public immutable specialtyId; // specialty ID of this medical history contract.
+    uint256 public dataFee;
 
     // --- EVENTS ---
-    event UpdatedURI(address indexed responsible, string uri);
-    event UpdatedParty(address indexed party, string uri);
+    event UpdatedURI(address indexed responsible, string _uri);
+    event UpdatedParty(address indexed party, string _uri);
     event RequestedApprovalParty(address indexed party);
+    event PaidForData(address indexed buyer);
 
     // --- MODIFIERS ---
     /**
@@ -39,6 +41,14 @@ contract MedicalHistory {
     }
 
     // --- EXTERNAL FUNCTIONS ---
+    /**
+    @notice setDataFee: sets a value for the dataFee variable. Only the owner can call this function.
+    @param _dataFee: new value for dataFee
+    */
+    function setDataFee(uint256 _dataFee) external onlyOwner {
+        dataFee = _dataFee;
+    }
+
     /**
     @notice getURI: returns the IPFS URI of the medical history for the owner or allowed parties.
     */
@@ -155,5 +165,16 @@ contract MedicalHistory {
             // solhint-disable-line no-inline-assembly
             result := mload(add(source, 32))
         }
+    }
+
+    /**
+    @notice patient concents to sell his own exams data as long as dataFee > 0. He also needs to be sure
+    that no sensitive data is on the exams.
+    */
+    receive() external payable {
+        require(dataFee > 0, "Not available");
+        require(!(msg.value < dataFee), "Not enough paid");
+
+        emit PaidForData(msg.sender);
     }
 }
