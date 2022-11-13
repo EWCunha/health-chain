@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "@nomiclabs/hardhat-etherscan": "^3.1.2",
     "hardhat": "^2.12.2"
   },
   "name": "smart-contracts",
@@ -65,6 +66,7 @@
     "decamelize": "^4.0.0",
     "depd": "^2.0.0",
     "diff": "^5.0.0",
+    "dotenv": "^16.0.3",
     "elliptic": "^6.5.4",
     "emoji-regex": "^8.0.0",
     "enquirer": "^2.3.6",

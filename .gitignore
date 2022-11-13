@@ -4,6 +4,7 @@ smart contracts/coverage
 smart contracts/coverage.json
 smart contracts/typechain
 smart contracts/typechain-types
+.env
 
 #Hardhat files
 smart contracts/cache

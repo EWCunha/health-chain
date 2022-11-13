@@ -1,26 +1,54 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
 const hre = require("hardhat");
+const fs = require('fs');
 
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
+async function main(deploy = true) {
 
-  const lockedAmount = hre.ethers.utils.parseEther("1");
+  let management
+  if (deploy) {
+    const Management = await hre.ethers.getContractFactory("Management");
+    management = await Management.deploy();
 
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
+    await management.deployed();
 
-  await lock.deployed();
+    let trial = 1
+    while (true) {
+      try {
+        await hre.run("verify:verify", {
+          address: management.address,
+          constructorArguments: [],
+        });
+        break
+      } catch (e) {
+        if (e.message.includes("Already Verified")) {
+          break
+        }
+        console.log(`Trial ${trial}`)
+        trial++
+      }
+    }
+  } else {
+    management = require("../../frontend/src/contracts/Management.json")
+  }
 
-  console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
-  );
+  const management_json = require("../artifacts/contracts/Management.sol/Management.json")
+  const medHistory_json = require("../artifacts/contracts/MedicalHistory.sol/MedicalHistory.json")
+
+  const management_contract_obj = { address: management_json.address, abi: management_json.abi }
+  const medHistory_contract_obj = { address: "", abi: medHistory_json.abi }
+
+  fs.writeFile("../frontend/src/contracts/Management.json", JSON.stringify(management_contract_obj), function (err) {
+    if (err) throw err;
+    console.log('complete Management');
+  }
+  )
+
+  fs.writeFile("../frontend/src/contracts/MedicalHistory.json", JSON.stringify(medHistory_contract_obj), function (err) {
+    if (err) throw err;
+    console.log('complete MedicalHistory');
+  }
+  )
+
+  console.log("Deployed at:", management.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere
