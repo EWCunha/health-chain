@@ -38,8 +38,7 @@ contract Management {
     event HistoryDeployed(
         address indexed history,
         address indexed owner,
-        uint256 specialtyId,
-        string uri
+        uint256 specialtyId
     );
     event ManagerUpdated(
         address indexed manager,
@@ -91,7 +90,7 @@ contract Management {
         );
         histories[msg.sender][_specialtyId] = address(history);
 
-        emit HistoryDeployed(address(history), msg.sender, _specialtyId, _uri);
+        emit HistoryDeployed(address(history), msg.sender, _specialtyId);
     }
 
     /**

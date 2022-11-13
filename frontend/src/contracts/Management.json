@@ -1,5 +1,5 @@
 {
-    "address": "0xfe7983E33D95872C7E88F7B57b26d82da81C7995",
+    "address": "0x03e62cc98fDCF95D3c22bD99B4ada5f5963d7501",
     "abi": [
         {
             "anonymous": false,
@@ -21,12 +21,6 @@
                     "internalType": "uint256",
                     "name": "specialtyId",
                     "type": "uint256"
-                },
-                {
-                    "indexed": false,
-                    "internalType": "string",
-                    "name": "uri",
-                    "type": "string"
                 }
             ],
             "name": "HistoryDeployed",
