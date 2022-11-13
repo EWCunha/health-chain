@@ -33,7 +33,7 @@ async function main(deploy = true) {
   const management_json = require("../artifacts/contracts/Management.sol/Management.json")
   const medHistory_json = require("../artifacts/contracts/MedicalHistory.sol/MedicalHistory.json")
 
-  const management_contract_obj = { address: management_json.address, abi: management_json.abi }
+  const management_contract_obj = { address: management.address, abi: management_json.abi }
   const medHistory_contract_obj = { address: "", abi: medHistory_json.abi }
 
   fs.writeFile("../frontend/src/contracts/Management.json", JSON.stringify(management_contract_obj), function (err) {
