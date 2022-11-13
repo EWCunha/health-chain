@@ -5,7 +5,7 @@ import "./interfaces/IManagement.sol";
 
 contract MedicalHistory {
     // --- STATE VARIABLES ---
-    address public immutable owner; // owber's/patient's address.
+    address public immutable owner; // owner's/patient's address.
     IManagment immutable management; // management contract pointer.
     bytes32 public uri; // medical history IPFS URI.
     bool public allowAll; // allows anyone to see the IPFS URI.
@@ -15,7 +15,8 @@ contract MedicalHistory {
 
     // --- EVENTS ---
     event UpdatedURI(address indexed responsible, string uri);
-    event UpdatedParty(address indexed party);
+    event UpdatedParty(address indexed party, string uri);
+    event RequestedApprovalParty(address indexed party);
 
     // --- MODIFIERS ---
     /**
@@ -65,6 +66,15 @@ contract MedicalHistory {
     }
 
     /**
+    @notice requestApprovalParty: emits event for requesting the IPFS URI
+    */
+    function requestApprovalParty() external {
+        require(msg.sender != owner, "Cannot be owner");
+
+        emit RequestedApprovalParty(msg.sender);
+    }
+
+    /**
     @notice updateAllowedParty: updates party URI. To not allow party anymore, set _uri to empty string.
     @param _uri: new IPFS URI.
     @param _party: party address.
@@ -75,7 +85,7 @@ contract MedicalHistory {
     {
         allowedParties[_party] = _stringToBytes32(_uri);
 
-        emit UpdatedParty(_party);
+        emit UpdatedParty(_party, _uri);
     }
 
     /**
