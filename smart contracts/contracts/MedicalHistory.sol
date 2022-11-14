@@ -7,10 +7,10 @@ contract MedicalHistory {
     // --- STATE VARIABLES ---
     address public immutable owner; // owner's/patient's address.
     IManagment immutable management; // management contract pointer.
-    bytes public uri; // medical history IPFS URI.
+    string public uri; // medical history IPFS URI.
     bool public allowAll; // allows anyone to see the IPFS URI.
     bool public considerTrustedParties; // consider the management contract list of trusted parties.
-    mapping(address => bytes) public allowedParties; // mapping from parties addresses to encrypted IPFS URIs.
+    mapping(address => string) public allowedParties; // mapping from parties addresses to encrypted IPFS URIs.
     uint256 public immutable specialtyId; // specialty ID of this medical history contract.
     uint256 public dataFee;
 
@@ -34,7 +34,7 @@ contract MedicalHistory {
         address _owner,
         uint256 _specialtyId
     ) {
-        uri = bytes(_uri);
+        uri = _uri;
         owner = _owner;
         management = IManagment(msg.sender);
         specialtyId = _specialtyId;
@@ -54,9 +54,9 @@ contract MedicalHistory {
     */
     function getURI() external view returns (string memory) {
         if (msg.sender == owner || allowAll || _getGeneralTrustedParty()) {
-            return string(uri);
+            return uri;
         } else {
-            return string(allowedParties[msg.sender]);
+            return allowedParties[msg.sender];
         }
     }
 
@@ -65,9 +65,9 @@ contract MedicalHistory {
     */
     function updateURI(string memory _newURI) external {
         if (msg.sender == owner) {
-            uri = bytes(_newURI);
-        } else if (allowedParties[msg.sender].length != 0) {
-            allowedParties[msg.sender] = bytes(_newURI);
+            uri = _newURI;
+        } else if (bytes(allowedParties[msg.sender]).length != 0) {
+            allowedParties[msg.sender] = _newURI;
         } else {
             revert("Not allowed");
         }
@@ -93,7 +93,7 @@ contract MedicalHistory {
         external
         onlyOwner
     {
-        allowedParties[_party] = bytes(_uri);
+        allowedParties[_party] = _uri;
 
         emit UpdatedParty(_party, _uri);
     }

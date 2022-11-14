@@ -52,9 +52,11 @@ const Patient = () => {
         const managementContract = getManagementContract(wallet.signer)
         const patientAddress = await wallet.signer.getAddress()
 
-        console.log(CID)
-
         const encrypted = AES.encrypt(CID, patientAddress);
+
+        console.log(patientAddress)
+        console.log(CID)
+        console.log(encrypted.toString())
 
         const tx = await managementContract.deployHistory(encrypted.toString(), specialty)
         await tx.wait()

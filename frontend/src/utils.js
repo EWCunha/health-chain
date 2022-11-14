@@ -2,7 +2,7 @@ import { ethers } from "ethers"
 import ManagementJSON from './contracts/Management.json'
 import MedicalHistoryJSON from './contracts/MedicalHistory.json'
 import { Web3Storage } from 'web3.storage'
-const { REACT_APP_WEB3_STORAGE_API_TOKEN } = process.env
+import token_api from "./.secret.json"
 
 const getWeb3 = async () => {
     if (window.ethereum) {
@@ -57,7 +57,7 @@ const getMedicalHistoryContract = (historyAddress, signer = undefined) => {
 }
 
 const uploadToIPFS = async (file) => {
-    const storageClient = new Web3Storage({ token: REACT_APP_WEB3_STORAGE_API_TOKEN })
+    const storageClient = new Web3Storage({ token: token_api.REACT_APP_WEB3_STORAGE_API_TOKEN })
     const CID = await storageClient.put([file])
 
     return CID

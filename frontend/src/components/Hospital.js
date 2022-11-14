@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 import { getWeb3, getManagementContract, getMedicalHistoryContract } from '../utils'
 import { ethers } from "ethers"
-const AES = require("crypto-js/aes");
+const CryptoJS = require("crypto-js");
 
 const Hospital = () => {
 
@@ -54,13 +54,12 @@ const Hospital = () => {
         const specialtyContract = getMedicalHistoryContract(specialtyContractAddress, wallet.signer)
         const new_historyURI = await specialtyContract.getURI()
 
-        console.log(new_historyURI)
-
         const hospAddress = await wallet.signer.getAddress()
 
-        const decrypted = AES.decrypt(new_historyURI, patientAddress);
+        const bytes = CryptoJS.AES.decrypt(new_historyURI, hospAddress);
+        const decrypted = bytes.toString(CryptoJS.enc.Utf8);
 
-        setHistoryURI(decrypted.toString())
+        setHistoryURI(`https://ipfs.io/ipfs/${decrypted}`)
     }
 
     useEffect(() => {
