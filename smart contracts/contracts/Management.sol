@@ -46,6 +46,10 @@ contract Management {
         bool status
     );
 
+    constructor() {
+        managers[msg.sender] = true;
+    }
+
     /**
     @notice only allowed manager address
     */
