@@ -110,9 +110,9 @@
             "name": "allowedParties",
             "outputs": [
                 {
-                    "internalType": "bytes32",
+                    "internalType": "bytes",
                     "name": "",
-                    "type": "bytes32"
+                    "type": "bytes"
                 }
             ],
             "stateMutability": "view",
@@ -265,9 +265,9 @@
             "name": "uri",
             "outputs": [
                 {
-                    "internalType": "bytes32",
+                    "internalType": "bytes",
                     "name": "",
-                    "type": "bytes32"
+                    "type": "bytes"
                 }
             ],
             "stateMutability": "view",

@@ -7,10 +7,10 @@ contract MedicalHistory {
     // --- STATE VARIABLES ---
     address public immutable owner; // owner's/patient's address.
     IManagment immutable management; // management contract pointer.
-    bytes32 public uri; // medical history IPFS URI.
+    bytes public uri; // medical history IPFS URI.
     bool public allowAll; // allows anyone to see the IPFS URI.
     bool public considerTrustedParties; // consider the management contract list of trusted parties.
-    mapping(address => bytes32) public allowedParties; // mapping from parties addresses to encrypted IPFS URIs.
+    mapping(address => bytes) public allowedParties; // mapping from parties addresses to encrypted IPFS URIs.
     uint256 public immutable specialtyId; // specialty ID of this medical history contract.
     uint256 public dataFee;
 
@@ -34,7 +34,7 @@ contract MedicalHistory {
         address _owner,
         uint256 _specialtyId
     ) {
-        uri = _stringToBytes32(_uri);
+        uri = bytes(_uri);
         owner = _owner;
         management = IManagment(msg.sender);
         specialtyId = _specialtyId;
@@ -54,9 +54,9 @@ contract MedicalHistory {
     */
     function getURI() external view returns (string memory) {
         if (msg.sender == owner || allowAll || _getGeneralTrustedParty()) {
-            return _bytes32ToString(uri);
+            return string(uri);
         } else {
-            return _bytes32ToString(allowedParties[msg.sender]);
+            return string(allowedParties[msg.sender]);
         }
     }
 
@@ -65,9 +65,9 @@ contract MedicalHistory {
     */
     function updateURI(string memory _newURI) external {
         if (msg.sender == owner) {
-            uri = _stringToBytes32(_newURI);
-        } else if (allowedParties[msg.sender] != bytes32(0)) {
-            allowedParties[msg.sender] = _stringToBytes32(_newURI);
+            uri = bytes(_newURI);
+        } else if (allowedParties[msg.sender].length != 0) {
+            allowedParties[msg.sender] = bytes(_newURI);
         } else {
             revert("Not allowed");
         }
@@ -93,7 +93,7 @@ contract MedicalHistory {
         external
         onlyOwner
     {
-        allowedParties[_party] = _stringToBytes32(_uri);
+        allowedParties[_party] = bytes(_uri);
 
         emit UpdatedParty(_party, _uri);
     }
@@ -126,45 +126,6 @@ contract MedicalHistory {
             considerTrustedParties
                 ? management.generalTrustedParty(msg.sender)
                 : false;
-    }
-
-    /**
-    @notice _bytes32ToString: converts bytes32 to string.
-    @param _bytes32: bytes32 value to be converted to string.
-    */
-    function _bytes32ToString(bytes32 _bytes32)
-        internal
-        pure
-        returns (string memory)
-    {
-        uint8 i = 0;
-        while (i < 32 && _bytes32[i] != 0) {
-            i++;
-        }
-        bytes memory bytesArray = new bytes(i);
-        for (i = 0; i < 32 && _bytes32[i] != 0; i++) {
-            bytesArray[i] = _bytes32[i];
-        }
-        return string(bytesArray);
-    }
-
-    /**
-    @notice _stringToBytes32: converts string to bytes32.
-    @param source: string value to be converted to bytes32.
-    */
-    function _stringToBytes32(string memory source)
-        internal
-        pure
-        returns (bytes32 result)
-    {
-        bytes memory tempEmptyStringTest = bytes(source);
-        if (tempEmptyStringTest.length == 0) {
-            return 0x0;
-        }
-        assembly {
-            // solhint-disable-line no-inline-assembly
-            result := mload(add(source, 32))
-        }
     }
 
     /**

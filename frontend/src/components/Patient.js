@@ -3,8 +3,9 @@ import {
     Card, Button, Typography, Box, Grid,
     FormControl, Select, MenuItem
 } from '@mui/material'
-import { getWeb3, getManagementContract, uploadToIPFS, toHexString } from '../utils'
-import * as openpgp from 'openpgp';
+import { getWeb3, getManagementContract, uploadToIPFS } from '../utils'
+const AES = require("crypto-js/aes");
+
 
 
 const Patient = () => {
@@ -47,26 +48,16 @@ const Patient = () => {
     }
 
     const handleSubmit = async () => {
-        // const CID = await uploadToIPFS(patientFile)
-        const CID = "abcde"
+        const CID = await uploadToIPFS(patientFile)
         const managementContract = getManagementContract(wallet.signer)
-        const message = await openpgp.createMessage({ text: CID })
         const patientAddress = await wallet.signer.getAddress()
-        const encrypted = await openpgp.encrypt({
-            message,
-            passwords: [patientAddress],
-            format: 'binary'
-        });
-        const encryptedMessage = await openpgp.readMessage({
-            binaryMessage: encrypted
-        });
 
-        let hex = toHexString(encrypted)
-        console.log(hex, hex.length);
+        console.log(CID)
 
-        return
-        const tx = await managementContract.deployHistory(encryptedMessage, specialty)
+        const encrypted = AES.encrypt(CID, patientAddress);
 
+        const tx = await managementContract.deployHistory(encrypted.toString(), specialty)
+        await tx.wait()
     }
 
     useEffect(() => {

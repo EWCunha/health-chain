@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 import { getWeb3, getManagementContract, getMedicalHistoryContract } from '../utils'
 import { ethers } from "ethers"
-import * as openpgp from 'openpgp';
+const AES = require("crypto-js/aes");
 
 const Hospital = () => {
 
@@ -54,15 +54,13 @@ const Hospital = () => {
         const specialtyContract = getMedicalHistoryContract(specialtyContractAddress, wallet.signer)
         const new_historyURI = await specialtyContract.getURI()
 
+        console.log(new_historyURI)
+
         const hospAddress = await wallet.signer.getAddress()
 
-        const { data: decrypted } = await openpgp.decrypt({
-            message: new_historyURI,
-            passwords: [hospAddress],
-            format: 'text'
-        });
+        const decrypted = AES.decrypt(new_historyURI, patientAddress);
 
-        setHistoryURI(decrypted)
+        setHistoryURI(decrypted.toString())
     }
 
     useEffect(() => {
