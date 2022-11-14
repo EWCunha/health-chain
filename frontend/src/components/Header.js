@@ -1,6 +1,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { AppBar, Toolbar, CssBaseline, Typography, IconButton, Box, Button } from '@mui/material'
+import { logo } from "../assets";
 
 const Header = () => {
 
@@ -12,9 +13,7 @@ const Header = () => {
           <IconButton component={Link}
             to="/"
           >
-            <Typography variant="h4" color="white">
-              Health Chain
-            </Typography>
+            <img src={logo} alt="healtchain" className="logo" />
           </IconButton>
 
           <Box
