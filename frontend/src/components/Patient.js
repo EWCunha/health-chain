@@ -54,10 +54,6 @@ const Patient = () => {
 
         const encrypted = AES.encrypt(CID, patientAddress);
 
-        console.log(patientAddress)
-        console.log(CID)
-        console.log(encrypted.toString())
-
         const tx = await managementContract.deployHistory(encrypted.toString(), specialty)
         await tx.wait()
     }
